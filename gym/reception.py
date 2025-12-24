@@ -6,7 +6,7 @@ from markupsafe import Markup
 from flask_login import current_user
 
 # SỬA IMPORT QUAN TRỌNG TẠI ĐÂY:
-from gym.models import Member, GoiTap, Receipt
+from gym.models import Member, GoiTap, Receipt,UserRole
 from gym import app, db
 
 
