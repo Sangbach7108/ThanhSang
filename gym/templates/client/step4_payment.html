@@ -1,33 +1,64 @@
 {% extends 'layout/base.html' %}
+
 {% block content %}
 <div class="container mt-5" style="max-width: 600px;">
-    <div class="card border-success">
-        <div class="card-header bg-success text-white text-center">
-            <h4>XÁC NHẬN THANH TOÁN</h4>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category if category != 'message' else 'info' }} alert-dismissible fade show shadow-sm" role="alert">
+            <i class="fas fa-check-circle me-2"></i> {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="card border-success shadow">
+        <div class="card-header bg-success text-white text-center py-3">
+            <h4 class="m-0 text-uppercase fw-bold">Xác nhận thanh toán</h4>
         </div>
-        <div class="card-body">
-            <h5 class="card-title text-center mb-4">Thông tin đơn hàng</h5>
-            <ul class="list-group list-group-flush mb-3">
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Khách hàng:</span> <strong>{{ user.name }} ({{ user.type }})</strong>
+        <div class="card-body p-4">
+            <h5 class="card-title text-center mb-4 text-muted">Thông tin đơn hàng</h5>
+
+            <ul class="list-group list-group-flush mb-4">
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span class="text-secondary">Khách hàng:</span>
+                    <strong class="text-dark">{{ user.name }} <small class="text-muted">({{ user.type }})</small></strong>
                 </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Số điện thoại:</span> <strong>{{ user.phone }}</strong>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span class="text-secondary">Số điện thoại:</span>
+                    <strong class="text-dark">{{ session.get('booking_phone') }}</strong>
                 </li>
-                <li class="list-group-item d-flex justify-content-between">
-                    <span>Gói đăng ký:</span> <strong>{{ package.name }}</strong>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                    <span class="text-secondary">Gói đăng ký:</span>
+                    <strong class="text-primary">{{ package.name }}</strong>
                 </li>
-                <li class="list-group-item d-flex justify-content-between bg-light">
-                    <span>TỔNG TIỀN:</span> <strong class="text-danger" style="font-size: 1.5rem;">{{ "{:,.0f}".format(package.price) }} VNĐ</strong>
+                <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-light p-3 rounded mt-2">
+                    <span class="fw-bold">TỔNG TIỀN:</span>
+                    <strong class="text-danger" style="font-size: 1.5rem;">{{ "{:,.0f}".format(package.price) }} VNĐ</strong>
                 </li>
             </ul>
 
-            <form action="/booking/complete" method="post" class="text-center">
-                <p class="text-muted small">Nhấn nút bên dưới để giả lập quá trình thanh toán thành công qua Ngân hàng/MoMo</p>
-                <button type="submit" class="btn btn-success btn-lg w-100 py-3" onclick="return confirm('Bạn xác nhận chuyển khoản thành công?')">
-                    <i class="fas fa-credit-card"></i> THANH TOÁN NGAY
+            <form action="{{ url_for('booking_confirm_payment') }}" method="post" class="text-center">
+                <input type="hidden" name="package_id" value="{{ package.id }}">
+
+                <div class="alert alert-warning py-2 small mb-4">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Nhấn nút bên dưới để giả lập quá trình xác nhận thanh toán thành công.
+                </div>
+
+                <button type="submit" class="btn btn-success btn-lg w-100 py-3 fw-bold shadow-sm"
+                        onclick="return confirm('Bạn xác nhận đã thực hiện thanh toán cho gói tập này?')">
+                    <i class="fas fa-credit-card me-2"></i> THANH TOÁN NGAY
                 </button>
             </form>
+
+            <div class="text-center mt-3">
+                <a href="{{ url_for('booking_select_package') }}" class="text-decoration-none small text-muted">
+                    <i class="fas fa-chevron-left me-1"></i> Quay lại chọn gói khác
+                </a>
+            </div>
         </div>
     </div>
 </div>

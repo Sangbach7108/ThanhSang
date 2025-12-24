@@ -45,6 +45,19 @@
         box-shadow: 0 0 0 0.2rem rgba(28, 200, 138, 0.15);
     }
 
+    /* Tối ưu hiển thị cho các ô nhập liệu trong bảng khi edit */
+    .table-input {
+        border: 1px solid transparent;
+        background: transparent;
+        transition: all 0.2s;
+    }
+    .table-input:focus {
+        background: white !important;
+        border-color: var(--exercise-primary) !important;
+        box-shadow: 0 0 5px rgba(28, 200, 138, 0.2);
+        outline: none;
+    }
+
     .btn-action {
         width: 35px;
         height: 35px;
@@ -84,7 +97,7 @@
                     <h5 class="m-0 fw-bold small"><i class="fas fa-plus-circle me-2"></i>Thêm Bài Tập Mới</h5>
                 </div>
                 <div class="card-body p-4">
-                    <form method="post">
+                    <form method="post" action="/admin/exercises">
                         <input type="hidden" name="action" value="add">
                         <div class="mb-3">
                             <label class="form-label small fw-bold text-muted">Tên bài tập</label>
@@ -128,21 +141,28 @@
                             <tbody>
                                 {% for e in exercises %}
                                 <tr>
-                                    <form method="post">
+                                    <form method="post" action="/admin/exercises">
                                         <input type="hidden" name="id" value="{{ e.id }}">
                                         <td class="ps-4 py-3">
-                                            <input type="text" name="name" class="form-control form-control-sm border-0 fw-bold p-0 mb-1" value="{{ e.name }}" style="background: transparent;">
-                                            <textarea name="description" class="form-control form-control-sm border-0 text-muted p-0 small" rows="1" style="background: transparent; resize: none;">{{ e.description }}</textarea>
+                                            <input type="text" name="name"
+                                                   class="form-control form-control-sm table-input fw-bold p-1 mb-1"
+                                                   value="{{ e.name }}" required>
+                                            <textarea name="description"
+                                                      class="form-control form-control-sm table-input text-muted p-1 small"
+                                                      rows="1" style="resize: vertical;">{{ e.description }}</textarea>
                                         </td>
                                         <td>
-                                            <input type="text" name="muscle_group" class="form-control form-control-sm border-0 p-0 fw-bold" value="{{ e.muscle_group }}" style="background: transparent; width: 80px;">
+                                            <input type="text" name="muscle_group"
+                                                   class="form-control form-control-sm table-input p-1 fw-bold"
+                                                   value="{{ e.muscle_group }}" style="width: 100px;">
                                         </td>
                                         <td class="text-center pe-4">
                                             <div class="d-flex justify-content-center gap-2">
-                                                <button type="submit" name="action" value="edit" class="btn-action btn-edit" title="Cập nhật">
+                                                <button type="submit" name="action" value="edit" class="btn-action btn-edit" title="Lưu thay đổi">
                                                     <i class="fas fa-save"></i>
                                                 </button>
-                                                <button type="submit" name="action" value="delete" class="btn-action btn-delete" onclick="return confirm('Bạn có chắc muốn xóa bài tập này?')" title="Xóa">
+                                                <button type="submit" name="action" value="delete" class="btn-action btn-delete"
+                                                        onclick="return confirm('Bạn có chắc muốn xóa bài tập này?')" title="Xóa">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </button>
                                             </div>
