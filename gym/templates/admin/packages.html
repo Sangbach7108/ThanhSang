@@ -1,0 +1,154 @@
+{% extends "layout/base.html" %}
+
+{% block title %}Quản lý Gói tập - Muscle Gym{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    :root {
+        --primary-color: #4e73df;
+        --success-color: #1cc88a;
+        --dark-bg: #f8f9fc;
+    }
+    body { background-color: var(--dark-bg); }
+
+    .card { border: none; border-radius: 12px; transition: transform 0.2s; }
+    .shadow-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important; }
+
+    .table thead th {
+        background-color: #4e73df;
+        color: white;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        border: none;
+    }
+
+    .price-input {
+        border: 2px solid #eaecf4;
+        border-radius: 8px;
+        font-weight: bold;
+        color: #4e73df;
+        transition: all 0.3s;
+    }
+    .price-input:focus { border-color: var(--primary-color); box-shadow: none; }
+
+    .btn-save {
+        border-radius: 8px;
+        padding: 5px 15px;
+        background-color: var(--success-color);
+        border: none;
+        color: white;
+        font-weight: 600;
+    }
+    .btn-save:hover { background-color: #17a673; }
+
+    .section-title {
+        border-left: 5px solid var(--primary-color);
+        padding-left: 15px;
+        margin-bottom: 30px;
+        font-weight: 800;
+        color: #3a3b45;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="section-title d-flex justify-content-between align-items-center">
+        <h2 class="m-0 text-uppercase">Hệ thống Quản lý Gói tập</h2>
+        <span class="badge bg-primary rounded-pill px-3 py-2">Admin Dashboard</span>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-4">
+            <div class="card shadow shadow-hover">
+                <div class="card-header bg-white py-3">
+                    <h5 class="m-0 font-weight-bold text-primary"><i class="fas fa-plus-circle me-2"></i>Tạo Gói Tập Mới</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        <input type="hidden" name="action" value="add">
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-muted">Tên hiển thị</label>
+                            <input type="text" name="name" class="form-control price-input" placeholder="Ví dụ: Gói Platinum" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold text-muted">Số tháng</label>
+                                <div class="input-group">
+                                    <input type="number" name="duration" class="form-control price-input" required min="1">
+                                    <span class="input-group-text bg-light small">tháng</span>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="form-label small fw-bold text-muted">Đơn giá (VNĐ)</label>
+                                <input type="number" name="price" class="form-control price-input" required>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-bold text-muted">Mô tả dịch vụ</label>
+                            <textarea name="description" class="form-control price-input" rows="3" placeholder="Ghi chú quyền lợi..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold py-2 shadow-sm">
+                            <i class="fas fa-save me-2"></i>XÁC NHẬN LƯU GÓI
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="card shadow shadow-hover">
+                <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="m-0 font-weight-bold text-primary"><i class="fas fa-list-ul me-2"></i>Danh mục Hiện có</h5>
+                    <small class="text-muted">Tự động cập nhật Database</small>
+                </div>
+                <div class="card-body p-0 overflow-hidden">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="ps-4">Thông tin gói</th>
+                                    <th class="text-center">Thời lượng</th>
+                                    <th style="width: 300px;">Giá niêm yết & Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in packages %}
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="fw-bold text-dark fs-5">{{ p.name }}</div>
+                                        <div class="small text-muted text-truncate" style="max-width: 250px;">
+                                            {{ p.description if p.description else "Không có mô tả" }}
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-light text-primary border border-primary px-3 py-2 fw-bold">
+                                            {{ p.duration }} tháng
+                                        </span>
+                                    </td>
+                                    <td class="pe-4">
+                                        <form method="post" class="d-flex gap-2">
+                                            <input type="hidden" name="action" value="edit_price">
+                                            <input type="hidden" name="id" value="{{ p.id }}">
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text bg-white">₫</span>
+                                                <input type="number" name="price" class="form-control price-input" value="{{ p.price }}">
+                                                <button type="submit" class="btn btn-save" title="Cập nhật ngay">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
